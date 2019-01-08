@@ -23,11 +23,14 @@
             <h4>Detalles de personaje</h4>
             <h5>{{character.name}}</h5>
             <img v-if="character.imageLink" :src="'https://api.got.show' + character.imageLink">
-            <p>{{character.male ? "Masculino" : "Femenino"}}</p>
+            <p>
+              <span v-if="character.culture">{{character.culture}}, </span>
+              {{character.male ? "Masculino" : "Femenino"}}
+            </p>
             <div class="left-align">
               <ul class="collapsible">
                 <li>
-                  <div class="collapsible-header">
+                  <div v-if="character.titles.length > 0" class="collapsible-header">
                     <i class="material-icons">title</i>Título(s)
                   </div>
                   <div class="collapsible-body">
@@ -46,21 +49,15 @@
                     </ul>
                   </div>
                 </li>
-                <li v-if="character.houses">
-                  <div class="collapsible-header">
-                    <i class="material-icons">home</i>Casa(s)
-                  </div>
-                  <div class="collapsible-body">
-                    <ul v-for="house in character.houses">
-                      <li>{{ house }}</li>
-                    </ul>
+                <li v-if="character.house">
+                  <div id="house" class="collapsible-header">
+                    <i class="material-icons">home</i>
+                    {{ character.house }}
                   </div>
                 </li>
               </ul>
             </div>
-            <div class="modal-body">
-              <slot name="body">default body</slot>
-            </div>
+            <button class="btn" @click="() => { goBack(); }">VOLVER</button>
           </div>
         </div>
       </div>
@@ -74,7 +71,7 @@ export default {
   name: "detail",
   data() {
     return {
-      character: {},
+      character: { titles: [] },
       isLoading: false
     };
   },
@@ -85,6 +82,16 @@ export default {
       this.character = res.data;
       this.isLoading = false;
     });
+  },
+  methods: {
+    /**
+     * @description go to the other component and request the character detail.
+     * @param {string} id. the "_id" of the character that we are going to request.
+     * @method goToDetail
+     */
+    goBack(id) {
+      this.$router.push({ path: "/" });
+    }
   }
 };
 </script>
